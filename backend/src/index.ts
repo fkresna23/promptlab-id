@@ -14,19 +14,22 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Log untuk memastikan environment variable terbaca di Heroku
 console.log(`CLIENT_URL di env: ${process.env.CLIENT_URL}`);
+console.log(
+  `VERCEL_DEPLOYMENT_URL di env: ${process.env.VERCEL_DEPLOYMENT_URL}`
+);
 
-const allowedOrigins = ["http://localhost:5173", process.env.CLIENT_URL].filter(
-  Boolean
-); // Filter untuk menghapus nilai undefined jika CLIENT_URL tidak ada
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.CLIENT_URL,
+  process.env.VERCEL_DEPLOYMENT_URL, // Tambahkan URL deployment Vercel
+].filter(Boolean);
 
 const corsOptions = {
   origin: (
     origin: string | undefined,
     callback: (err: Error | null, allow?: boolean) => void
   ) => {
-    // Izinkan permintaan jika origin ada di dalam daftar, atau jika origin tidak ada (seperti dari Postman)
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
