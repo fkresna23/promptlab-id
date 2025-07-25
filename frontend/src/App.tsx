@@ -6,7 +6,7 @@ import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import PromptsListPage from "./pages/PromptsListPage";
 import PromptDetailPage from "./pages/PromptDetailPage";
-import OfferingsPage from "./pages/OfferingsPage"; // Impor halaman gabungan
+import OfferingsPage from "./pages/OfferingsPage";
 
 interface UserInfo {
   _id: string;

@@ -1,8 +1,6 @@
-import React from "react";
-
 export const SalesIcon = () => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
+    xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"
     fill="none"
     viewBox="0 0 24 24"
     strokeWidth={1.5}
@@ -18,7 +16,7 @@ export const SalesIcon = () => (
 );
 export const EducationIcon = () => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
+    xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"
     fill="none"
     viewBox="0 0 24 24"
     strokeWidth={1.5}
@@ -34,11 +32,9 @@ export const EducationIcon = () => (
     />
   </svg>
 );
-// Anda bisa menambahkan ikon lain di sini dengan cara yang sama
-// Untuk ikon yang belum ada, kita buat placeholder sederhana
 export const SolopreneursIcon = () => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
+    xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"
     fill="none"
     viewBox="0 0 24 24"
     strokeWidth={1.5}
@@ -54,7 +50,7 @@ export const SolopreneursIcon = () => (
 );
 export const SeoIcon = () => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
+    xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"
     fill="none"
     viewBox="0 0 24 24"
     strokeWidth={1.5}
@@ -70,7 +66,7 @@ export const SeoIcon = () => (
 );
 export const ProductivityIcon = () => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
+    xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"
     fill="none"
     viewBox="0 0 24 24"
     strokeWidth={1.5}
@@ -86,7 +82,7 @@ export const ProductivityIcon = () => (
 );
 export const WritingIcon = () => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
+    xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"
     fill="none"
     viewBox="0 0 24 24"
     strokeWidth={1.5}
@@ -102,7 +98,7 @@ export const WritingIcon = () => (
 );
 export const BusinessIcon = () => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
+    xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"
     fill="none"
     viewBox="0 0 24 24"
     strokeWidth={1.5}
@@ -118,7 +114,7 @@ export const BusinessIcon = () => (
 );
 export const MarketingIcon = () => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
+    xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"
     fill="none"
     viewBox="0 0 24 24"
     strokeWidth={1.5}
