@@ -9,7 +9,7 @@ const HeroSection = () => {
           className="w-24 h-24 opacity-80"
           onError={(e) => {
             e.currentTarget.src =
-              "https://placehold.co/96x96/cccccc/FFFFFF?text=Icon";
+              "[https://placehold.co/96x96/cccccc/FFFFFF?text=Icon](https://placehold.co/96x96/cccccc/FFFFFF?text=Icon)";
           }}
         />
       </div>
@@ -20,7 +20,7 @@ const HeroSection = () => {
           className="w-16 h-16"
           onError={(e) => {
             e.currentTarget.src =
-              "https://placehold.co/64x64/cccccc/FFFFFF?text=Icon";
+              "[https://placehold.co/64x64/cccccc/FFFFFF?text=Icon](https://placehold.co/64x64/cccccc/FFFFFF?text=Icon)";
           }}
         />
       </div>
@@ -29,7 +29,7 @@ const HeroSection = () => {
       <div className="max-w-3xl mx-auto">
         <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight">
           The Biggest AI
-          <span className="block bg-gray-900 text-white rounded-xl px-4 py-2 mt-2 inline-block mx-2">
+          <span className="bg-gray-900 text-white rounded-xl px-4 py-2 mt-2 inline-block mx-2">
             Prompt Library
           </span>
         </h1>

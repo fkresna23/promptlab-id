@@ -14,16 +14,22 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-const allowedOrigins = ["http://localhost:5173", process.env.CLIENT_URL];
+// PERBAIKAN: Logika CORS yang lebih kuat
+const allowedOrigins: (string | undefined)[] = [
+  "http://localhost:5173", // Selalu izinkan untuk development
+  process.env.CLIENT_URL,
+];
 
 const corsOptions = {
   origin: (
     origin: string | undefined,
     callback: (err: Error | null, allow?: boolean) => void
   ) => {
+    // Izinkan permintaan jika origin ada di dalam daftar, atau jika origin tidak ada (seperti dari Postman/aplikasi server)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.error("Permintaan CORS ditolak dari origin:", origin);
       callback(new Error("Not allowed by CORS"));
     }
   },
