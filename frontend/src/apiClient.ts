@@ -1,6 +1,5 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
-// Fungsi helper untuk menangani respons fetch
 const handleResponse = async (response: Response) => {
   const data = await response.json();
   if (!response.ok) {
@@ -8,8 +7,6 @@ const handleResponse = async (response: Response) => {
   }
   return data;
 };
-
-// --- Kumpulan fungsi untuk setiap endpoint API ---
 
 export const getCategories = async () => {
   const response = await fetch(`${API_BASE_URL}/api/categories`);

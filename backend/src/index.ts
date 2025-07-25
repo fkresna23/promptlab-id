@@ -14,11 +14,13 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+// PERBAIKAN: Konfigurasi CORS yang lebih spesifik
+const corsOptions = {
+  origin: process.env.CLIENT_URL || "http://localhost:5173", // Izinkan URL dari Vercel atau localhost
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 app.use("/api/categories", categoryRoutes);
