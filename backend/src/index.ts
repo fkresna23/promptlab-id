@@ -14,13 +14,23 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// PERBAIKAN: Konfigurasi CORS yang lebih spesifik
+const allowedOrigins = ["http://localhost:5173", process.env.CLIENT_URL];
+
 const corsOptions = {
-  origin: process.env.CLIENT_URL || "http://localhost:5173", // Izinkan URL dari Vercel atau localhost
+  origin: (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void
+  ) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   optionsSuccessStatus: 200,
 };
-app.use(cors(corsOptions));
 
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use("/api/categories", categoryRoutes);
