@@ -16,22 +16,16 @@ const PORT = process.env.PORT || 5001;
 
 console.log(`CLIENT_URL di env: ${process.env.CLIENT_URL}`);
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  process.env.CLIENT_URL, // URL Produksi utama Anda
-];
+const allowedOrigins = ["http://localhost:5173", process.env.CLIENT_URL].filter(
+  Boolean
+);
 
 const corsOptions = {
   origin: (
     origin: string | undefined,
     callback: (err: Error | null, allow?: boolean) => void
   ) => {
-    // PERBAIKAN: Izinkan jika origin ada di daftar, atau jika origin diakhiri dengan .vercel.app
-    if (
-      !origin ||
-      allowedOrigins.includes(origin) ||
-      origin.endsWith(".vercel.app")
-    ) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       console.error(`Permintaan CORS DITOLAK dari origin: ${origin}`);
