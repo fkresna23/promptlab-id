@@ -14,22 +14,23 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// PERBAIKAN: Logika CORS yang lebih kuat
-const allowedOrigins: (string | undefined)[] = [
-  "http://localhost:5173", // Selalu izinkan untuk development
-  process.env.CLIENT_URL,
-];
+// Log untuk memastikan environment variable terbaca di Heroku
+console.log(`CLIENT_URL di env: ${process.env.CLIENT_URL}`);
+
+const allowedOrigins = ["http://localhost:5173", process.env.CLIENT_URL].filter(
+  Boolean
+); // Filter untuk menghapus nilai undefined jika CLIENT_URL tidak ada
 
 const corsOptions = {
   origin: (
     origin: string | undefined,
     callback: (err: Error | null, allow?: boolean) => void
   ) => {
-    // Izinkan permintaan jika origin ada di dalam daftar, atau jika origin tidak ada (seperti dari Postman/aplikasi server)
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Izinkan permintaan jika origin ada di dalam daftar, atau jika origin tidak ada (seperti dari Postman)
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      console.error("Permintaan CORS ditolak dari origin:", origin);
+      console.error(`Permintaan CORS DITOLAK dari origin: ${origin}`);
       callback(new Error("Not allowed by CORS"));
     }
   },
