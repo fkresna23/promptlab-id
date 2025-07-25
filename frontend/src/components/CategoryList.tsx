@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import CategoryCard from "./CategoryCard";
+import { getCategories } from "../apiClient"; // Impor dari API Client
 import {
   SalesIcon,
   EducationIcon,
@@ -41,16 +42,10 @@ const CategoryList: React.FC<CategoryListProps> = ({ handleCategoryClick }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:5001/api/categories");
-        if (!response.ok) throw new Error("Gagal mengambil data dari server");
-        const data = await response.json();
+        const data = await getCategories(); // Gunakan fungsi dari API Client
         setCategories(data);
       } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("Terjadi kesalahan yang tidak diketahui");
-        }
+        if (err instanceof Error) setError(err.message);
       } finally {
         setIsLoading(false);
       }

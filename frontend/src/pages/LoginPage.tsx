@@ -1,11 +1,14 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { loginUser } from "../apiClient";
 
+// Definisikan tipe data yang dibutuhkan
 interface UserInfo {
   _id: string;
   name: string;
   email: string;
   token: string;
 }
+
 interface LoginPageProps {
   setCurrentPage: (page: string) => void;
   setUserInfo: (userInfo: UserInfo) => void;
@@ -41,23 +44,17 @@ const LoginPage: React.FC<LoginPageProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch("http://localhost:5001/api/users/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Gagal untuk login.");
+      const data = await loginUser({ email, password });
       localStorage.setItem("userInfo", JSON.stringify(data));
       setUserInfo(data);
       setCurrentPage("home");
-    } catch (err) {
-      if (err instanceof Error) setError(err.message);
+    } catch (error) {
+      if (error instanceof Error) setError(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +69,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
           className="max-w-md w-full"
           onError={(e) =>
             (e.currentTarget.src =
-              "[https://placehold.co/600x400/111111/FFFFFF?text=Gambar+Anda](https://placehold.co/600x400/111111/FFFFFF?text=Gambar+Anda)")
+              "https://placehold.co/600x400/111111/FFFFFF?text=Gambar+Anda")
           }
         />
       </div>
@@ -89,7 +86,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
             {error}
           </div>
         )}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handlePasswordLogin}>
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
