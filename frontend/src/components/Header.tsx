@@ -143,7 +143,7 @@ const Header: React.FC<HeaderProps> = ({
                 <span className="text-black font-bold text-xl">&gt;</span>
               </div>
               <span className="hidden sm:block font-bold text-xl text-white">
-                God of Prompt
+                PromptLab-ID
               </span>
             </button>
           </div>
