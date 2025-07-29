@@ -14,26 +14,39 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// PERBAIKAN: Logika CORS yang lebih andal
-const allowedOrigins = [
+// PERBAIKAN: Konfigurasi CORS yang lebih type-safe
+const allowedOrigins: (string | RegExp)[] = [
   "http://localhost:5173", // Untuk development lokal
-  process.env.CLIENT_URL, // URL Produksi utama Anda dari Heroku env
-];
+  process.env.CLIENT_URL || "", // URL Produksi utama Anda dari Heroku env
+  /\.vercel\.app$/, // Untuk semua subdomain Vercel
+].filter(Boolean); // Hapus string kosong jika CLIENT_URL undefined
 
 const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
-    // Izinkan jika origin ada di daftar ATAU jika itu adalah preview URL dari Vercel
-    if (
-      !origin ||
-      allowedOrigins.includes(origin) ||
-      /--fajar-kresnas-projects\.vercel\.app$/.test(origin)
-    ) {
+    // Izinkan jika tidak ada origin (mobile apps, Postman, etc.) atau jika origin diizinkan
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    // Cek apakah origin diizinkan
+    const isAllowed = allowedOrigins.some((allowed) => {
+      if (typeof allowed === "string") {
+        return allowed === origin;
+      } else if (allowed instanceof RegExp) {
+        return allowed.test(origin);
+      }
+      return false;
+    });
+
+    if (isAllowed) {
       callback(null, true);
     } else {
       console.error(`Permintaan CORS DITOLAK dari origin: ${origin}`);
       callback(new Error("Not allowed by CORS"));
     }
   },
+  credentials: true, // Izinkan cookies jika diperlukan
 };
 
 app.use(cors(corsOptions));

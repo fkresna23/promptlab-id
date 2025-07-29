@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { registerUser } from "../apiClient";
 
 interface UserInfo {
   _id: string;
@@ -6,6 +7,7 @@ interface UserInfo {
   email: string;
   token: string;
 }
+
 interface SignUpPageProps {
   setCurrentPage: (page: string) => void;
   setUserInfo: (userInfo: UserInfo) => void;
@@ -47,13 +49,7 @@ const SignUpPage: React.FC<SignUpPageProps> = ({
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch("http://localhost:5001/api/users/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Gagal membuat akun.");
+      const data = await registerUser({ name, email, password }); // Gunakan fungsi dari apiClient
       localStorage.setItem("userInfo", JSON.stringify(data));
       setUserInfo(data);
       setCurrentPage("home");

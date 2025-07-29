@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getPromptById } from "../apiClient"; //
 
 // Definisikan tipe data yang lebih lengkap
 interface Prompt {
@@ -86,11 +87,7 @@ const PromptDetailPage: React.FC<PromptDetailPageProps> = ({
       if (!promptId) return;
       setIsLoading(true);
       try {
-        const response = await fetch(
-          `http://localhost:5001/api/prompts/${promptId}`
-        );
-        if (!response.ok) throw new Error("Gagal mengambil detail prompt.");
-        const data = await response.json();
+        const data = await getPromptById(promptId); // Gunakan fungsi dari apiClient
         setPrompt(data);
       } catch (err) {
         if (err instanceof Error) setError(err.message);

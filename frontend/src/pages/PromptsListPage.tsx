@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import PromptCard from "../components/PromptCard";
+import { getPromptsByCategory } from "../apiClient";
 
 interface Prompt {
   _id: string;
   title: string;
   promptText: string;
 }
+
 interface PromptsListPageProps {
   selectedCategory: { id: string; name: string };
   setSelectedPromptId: (id: string) => void;
@@ -27,11 +29,7 @@ const PromptsListPage: React.FC<PromptsListPageProps> = ({
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch(
-          `http://localhost:5001/api/prompts/category/${selectedCategory.id}`
-        );
-        if (!response.ok) throw new Error("Gagal mengambil data prompt.");
-        const data = await response.json();
+        const data = await getPromptsByCategory(selectedCategory.id); // Gunakan fungsi dari apiClient
         setPrompts(data);
       } catch (err) {
         if (err instanceof Error) setError(err.message);
