@@ -7,6 +7,8 @@ import LoginPage from "./pages/LoginPage";
 import PromptsListPage from "./pages/PromptsListPage";
 import PromptDetailPage from "./pages/PromptDetailPage";
 import OfferingsPage from "./pages/OfferingsPage";
+import MyProfilePage from "./pages/MyProfilePage"; // Impor halaman baru
+import MyProductsPage from "./pages/MyProductsPage"; // Impor halaman baru
 
 interface UserInfo {
   _id: string;
@@ -44,6 +46,18 @@ function App() {
     switch (currentPage) {
       case "offerings":
         return <OfferingsPage userInfo={userInfo} />;
+      case "myProfile":
+        return (
+          <div className="bg-[#F3F3F3] py-10">
+            <MyProfilePage userInfo={userInfo} />
+          </div>
+        );
+      case "myProducts":
+        return (
+          <div className="bg-[#F3F3F3] py-10">
+            <MyProductsPage />
+          </div>
+        );
       case "signup":
         return (
           <div className="bg-white py-10">

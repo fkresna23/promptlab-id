@@ -9,7 +9,7 @@ interface UserInfo {
 
 const ProfileMenuIcon = () => (
   <svg
-    xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"
+    xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
     strokeWidth={1.5}
@@ -67,7 +67,7 @@ const Header: React.FC<HeaderProps> = ({
               className="h-8 md:h-10"
               onError={(e) => {
                 e.currentTarget.src =
-                  "[https://placehold.co/40x40/FFFFFF/000000?text=Logo](https://placehold.co/40x40/FFFFFF/000000?text=Logo)";
+                  "https://placehold.co/40x40/FFFFFF/000000?text=Logo";
               }}
             />
             <span className="font-bold text-lg">&gt; _</span>
@@ -127,12 +127,18 @@ const Header: React.FC<HeaderProps> = ({
                   </div>
                   <ul className="py-2">
                     <li>
-                      <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-md">
+                      <button
+                        onClick={() => handleNav("myProfile")}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-md"
+                      >
                         My Profile
                       </button>
                     </li>
                     <li>
-                      <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-md">
+                      <button
+                        onClick={() => handleNav("myProducts")}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-md"
+                      >
                         My Products
                       </button>
                     </li>
