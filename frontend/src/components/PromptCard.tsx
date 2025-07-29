@@ -2,34 +2,69 @@ interface PromptCardProps {
   title: string;
   description: string;
   onClick: () => void;
+  isPremium?: boolean;
 }
 
-const PromptCard = ({ title, description, onClick }: PromptCardProps) => {
+const PromptCard = ({
+  title,
+  description,
+  onClick,
+  isPremium,
+}: PromptCardProps) => {
   return (
     <div
       onClick={onClick}
-      className="bg-white border border-gray-200 rounded-2xl p-6 flex justify-between items-start hover:shadow-lg hover:border-yellow-400 transition-all duration-300 cursor-pointer"
+      className="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg hover:border-yellow-400 transition-all duration-300 cursor-pointer group relative"
     >
-      <div>
-        <h3 className="font-bold text-lg text-gray-900">{title}</h3>
-        <p className="text-gray-600 mt-2 text-sm">{description}</p>
+      {/* Content */}
+      <div className="flex justify-between items-start">
+        <div className="flex-1 pr-4">
+          {/* Icon placeholder */}
+          <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-yellow-100 transition-colors">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6 text-gray-600 group-hover:text-yellow-600"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.58-5.84a14.927 14.927 0 012.58 5.84M9.75 7.124a6 6 0 00-6 6v3a6 6 0 106 6v-3a6 6 0 006-6v-3a6 6 0 00-6-6z"
+              />
+            </svg>
+          </div>
+
+          <h3 className="font-bold text-lg text-gray-900 mb-2 leading-tight">
+            {title}
+          </h3>
+          <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
+            {description}
+          </p>
+        </div>
+
+        {/* Arrow button */}
+        <div className="flex-shrink-0">
+          <div className="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center group-hover:bg-gray-800 transition-colors">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+              />
+            </svg>
+          </div>
+        </div>
       </div>
-      <button className="bg-black text-white rounded-full p-2 ml-4">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-5 h-5"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
-          />
-        </svg>
-      </button>
     </div>
   );
 };
