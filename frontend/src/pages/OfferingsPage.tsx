@@ -1,5 +1,3 @@
-import React from "react";
-
 interface UserInfo {
   _id: string;
   name: string;
@@ -11,7 +9,7 @@ interface OfferingsPageProps {
   userInfo: UserInfo | null;
 }
 
-const OfferingsPage: React.FC<OfferingsPageProps> = ({ userInfo }) => {
+const OfferingsPage = ({ userInfo }: OfferingsPageProps) => {
   const plans = [
     {
       name: "Free",

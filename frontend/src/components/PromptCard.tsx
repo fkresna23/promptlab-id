@@ -1,16 +1,10 @@
-import React from "react";
-
 interface PromptCardProps {
   title: string;
   description: string;
   onClick: () => void;
 }
 
-const PromptCard: React.FC<PromptCardProps> = ({
-  title,
-  description,
-  onClick,
-}) => {
+const PromptCard = ({ title, description, onClick }: PromptCardProps) => {
   return (
     <div
       onClick={onClick}

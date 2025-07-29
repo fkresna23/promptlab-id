@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import PromptCard from "../components/PromptCard";
 import { getPromptsByCategory } from "../apiClient";
 
@@ -14,11 +14,11 @@ interface PromptsListPageProps {
   setCurrentPage: (page: string) => void;
 }
 
-const PromptsListPage: React.FC<PromptsListPageProps> = ({
+const PromptsListPage = ({
   selectedCategory,
   setSelectedPromptId,
   setCurrentPage,
-}) => {
+}: PromptsListPageProps) => {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +29,7 @@ const PromptsListPage: React.FC<PromptsListPageProps> = ({
       setIsLoading(true);
       setError(null);
       try {
-        const data = await getPromptsByCategory(selectedCategory.id); // Gunakan fungsi dari apiClient
+        const data = await getPromptsByCategory(selectedCategory.id);
         setPrompts(data);
       } catch (err) {
         if (err instanceof Error) setError(err.message);

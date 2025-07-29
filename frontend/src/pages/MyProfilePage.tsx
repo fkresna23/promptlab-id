@@ -1,5 +1,3 @@
-import React from "react";
-
 interface UserInfo {
   _id: string;
   name: string;
@@ -11,7 +9,7 @@ interface MyProfilePageProps {
   userInfo: UserInfo | null;
 }
 
-const MyProfilePage: React.FC<MyProfilePageProps> = ({ userInfo }) => {
+const MyProfilePage = ({ userInfo }: MyProfilePageProps) => {
   if (!userInfo) {
     return (
       <div className="text-center py-16">

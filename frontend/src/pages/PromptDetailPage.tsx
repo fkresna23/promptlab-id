@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { getPromptById } from "../apiClient"; //
+import { useState, useEffect } from "react";
+import { getPromptById } from "../apiClient";
 
-// Definisikan tipe data yang lebih lengkap
 interface Prompt {
   _id: string;
   title: string;
@@ -17,10 +16,9 @@ interface PromptDetailPageProps {
   setCurrentPage: (page: string) => void;
 }
 
-// Komponen Ikon
 const BulbIcon = () => (
   <svg
-    xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"
+    xmlns="http://www.w3.org/2000/svg"
     className="h-6 w-6 text-yellow-500"
     fill="none"
     viewBox="0 0 24 24"
@@ -34,9 +32,10 @@ const BulbIcon = () => (
     />
   </svg>
 );
+
 const GearIcon = () => (
   <svg
-    xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"
+    xmlns="http://www.w3.org/2000/svg"
     className="h-6 w-6 text-gray-500"
     fill="none"
     viewBox="0 0 24 24"
@@ -56,9 +55,10 @@ const GearIcon = () => (
     />
   </svg>
 );
+
 const QuestionIcon = () => (
   <svg
-    xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"
+    xmlns="http://www.w3.org/2000/svg"
     className="h-6 w-6 text-red-500"
     fill="none"
     viewBox="0 0 24 24"
@@ -73,10 +73,10 @@ const QuestionIcon = () => (
   </svg>
 );
 
-const PromptDetailPage: React.FC<PromptDetailPageProps> = ({
+const PromptDetailPage = ({
   promptId,
   setCurrentPage,
-}) => {
+}: PromptDetailPageProps) => {
   const [prompt, setPrompt] = useState<Prompt | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -87,7 +87,7 @@ const PromptDetailPage: React.FC<PromptDetailPageProps> = ({
       if (!promptId) return;
       setIsLoading(true);
       try {
-        const data = await getPromptById(promptId); // Gunakan fungsi dari apiClient
+        const data = await getPromptById(promptId);
         setPrompt(data);
       } catch (err) {
         if (err instanceof Error) setError(err.message);
@@ -188,7 +188,6 @@ const PromptDetailPage: React.FC<PromptDetailPageProps> = ({
         >
           {copySuccess ? "Disalin!" : "Copy"}
         </button>
-        {/* PERBAIKAN DI SINI */}
         <pre className="whitespace-pre-wrap font-sans text-base leading-relaxed pr-24">
           {prompt.promptText}
         </pre>
