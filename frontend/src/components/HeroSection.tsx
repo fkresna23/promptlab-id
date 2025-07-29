@@ -33,7 +33,7 @@ const HeroSection = () => {
             Prompt Library
           </span>
         </h1>
-        <p className="mt-4 text-lg text-gray-600">by God of Prompt</p>
+        <p className="mt-4 text-lg text-gray-600">by PromptLab-ID</p>
         <p className="mt-6 max-w-2xl mx-auto text-lg text-gray-700">
           Discover the best AI prompts for Generative AI like ChatGPT, Claude, &
           Gemini designed to supercharge your business and boost your
