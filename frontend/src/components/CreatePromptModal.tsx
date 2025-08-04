@@ -5,6 +5,8 @@ import {
   type Category,
   type PromptData,
 } from "../apiClient";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 interface CreatePromptModalProps {
   isOpen: boolean;
@@ -22,19 +24,21 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
   const [promptText, setPromptText] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [isPremium, setIsPremium] = useState(false);
+  const [whatItDoesText, setWhatItDoesText] = useState("");
+  const [tipsText, setTipsText] = useState("");
+  const [howToUseText, setHowToUseText] = useState("");
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Ambil daftar kategori saat modal pertama kali akan ditampilkan
     if (isOpen) {
       getCategories()
         .then((data) => {
           setCategories(data);
           if (data.length > 0) {
-            setCategoryId(data[0]._id); // Set default value
+            setCategoryId(data[0]._id);
           }
         })
         .catch(() => setError("Gagal memuat kategori."));
@@ -51,18 +55,31 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
     setIsLoading(true);
     setError(null);
 
+    const whatItDoes = whatItDoesText
+      .split("\n")
+      .filter((line) => line.trim() !== "");
+    const tips = tipsText.split("\n").filter((line) => line.trim() !== "");
+    const howToUse = howToUseText
+      .split("\n")
+      .filter((line) => line.trim() !== "");
+
+    // --- PERBAIKAN 1: GUNAKAN TIPE PromptData ---
     const promptData: PromptData = {
       title,
       description,
       promptText,
       category: categoryId,
       isPremium,
+      whatItDoes,
+      tips,
+      howToUse,
     };
 
     try {
+      // --- PERBAIKAN 2: HAPUS `as any` ---
       await createPrompt(promptData);
-      onSuccess(); // Panggil fungsi onSuccess untuk refresh data di dashboard
-      onClose(); // Tutup modal
+      onSuccess();
+      onClose();
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Terjadi error tidak diketahui."
@@ -76,7 +93,7 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
+      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <h2 className="text-2xl font-bold mb-6">Tambah Prompt Baru</h2>
         {error && (
           <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
@@ -106,20 +123,57 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
               className="w-full px-3 py-2 border rounded"
             />
           </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 font-bold mb-2">
+              What This Prompt Does
+            </label>
+            <textarea
+              value={whatItDoesText}
+              onChange={(e) => setWhatItDoesText(e.target.value)}
+              rows={3}
+              className="w-full px-3 py-2 border rounded"
+              placeholder="Masukkan setiap poin di baris baru..."
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-bold mb-2">Tips</label>
+            <textarea
+              value={tipsText}
+              onChange={(e) => setTipsText(e.target.value)}
+              rows={3}
+              className="w-full px-3 py-2 border rounded"
+              placeholder="Masukkan setiap tips di baris baru..."
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-bold mb-2">
+              How To Use The Prompt
+            </label>
+            <textarea
+              value={howToUseText}
+              onChange={(e) => setHowToUseText(e.target.value)}
+              rows={3}
+              className="w-full px-3 py-2 border rounded"
+              placeholder="Masukkan setiap cara penggunaan di baris baru..."
+            />
+          </div>
+
           <div className="mb-4">
             <label className="block text-gray-700 font-bold mb-2">
               Teks Prompt Lengkap
             </label>
-            <textarea
-              value={promptText}
-              onChange={(e) => setPromptText(e.target.value)}
-              required
-              rows={6}
-              className="w-full px-3 py-2 border rounded"
-            />
+            <div className="bg-white">
+              <ReactQuill
+                theme="snow"
+                value={promptText}
+                onChange={setPromptText}
+              />
+            </div>
           </div>
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="mb-4">
+
+          <div className="grid grid-cols-2 gap-4 pt-14 md:pt-0 mb-6">
+            <div>
               <label className="block text-gray-700 font-bold mb-2">
                 Kategori
               </label>
@@ -141,7 +195,7 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
                 id="isPremium"
                 checked={isPremium}
                 onChange={(e) => setIsPremium(e.target.checked)}
-                className="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="h-5 w-5"
               />
               <label
                 htmlFor="isPremium"

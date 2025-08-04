@@ -1,20 +1,6 @@
 import { useState, useEffect } from "react";
-import { getPromptById } from "../apiClient";
-
-interface Prompt {
-  _id: string;
-  title: string;
-  promptText: string;
-  keySentence?: string;
-  whatItDoes?: string[];
-  tips?: string[];
-  howToUse?: string[];
-}
-
-interface PromptDetailPageProps {
-  promptId: string;
-  setCurrentPage: (page: string) => void;
-}
+import { getPromptById, type Prompt } from "../apiClient";
+import DOMPurify from "dompurify";
 
 const BulbIcon = () => (
   <svg
@@ -73,38 +59,29 @@ const QuestionIcon = () => (
   </svg>
 );
 
+interface PromptDetailPageProps {
+  promptId: string;
+  setCurrentPage: (page: string) => void;
+}
+
 const PromptDetailPage = ({
   promptId,
   setCurrentPage,
 }: PromptDetailPageProps) => {
   const [prompt, setPrompt] = useState<Prompt | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); // Deklarasi sudah ada
+  const [error, setError] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState("");
 
   useEffect(() => {
     const fetchPromptDetail = async () => {
       if (!promptId) return;
-
-      // Reset state sebelum fetch baru
       setIsLoading(true);
-      setError(null);
-
       try {
         const data = await getPromptById(promptId);
         setPrompt(data);
       } catch (err) {
-        // --- INI BAGIAN PENTING UNTUK MEMANGGIL setError ---
-        if (err instanceof Error) {
-          if (err.message.includes("premium")) {
-            setError("premium_required");
-          } else {
-            setError(err.message);
-          }
-        } else {
-          setError("An unknown error occurred.");
-        }
-        // ----------------------------------------------------
+        if (err instanceof Error) setError(err.message);
       } finally {
         setIsLoading(false);
       }
@@ -114,44 +91,26 @@ const PromptDetailPage = ({
 
   const handleCopy = () => {
     if (prompt?.promptText) {
-      const textArea = document.createElement("textarea");
-      textArea.value = prompt.promptText;
-      document.body.appendChild(textArea);
-      textArea.select();
-      try {
-        document.execCommand("copy");
-        setCopySuccess("Prompt berhasil disalin!");
-        setTimeout(() => setCopySuccess(""), 2000);
-      } catch (err) {
-        console.error("Gagal menyalin teks: ", err);
-      }
-      document.body.removeChild(textArea);
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = prompt.promptText;
+      const textToCopy = tempDiv.textContent || tempDiv.innerText || "";
+
+      navigator.clipboard.writeText(textToCopy).then(
+        () => {
+          setCopySuccess("Prompt berhasil disalin!");
+          setTimeout(() => setCopySuccess(""), 2000);
+        },
+        (err) => {
+          console.error("Gagal menyalin teks: ", err);
+        }
+      );
     }
   };
 
   if (isLoading)
     return <div className="text-center py-16">Memuat detail prompt...</div>;
-
-  if (error === "premium_required") {
-    return (
-      <div className="container mx-auto text-center py-16">
-        <h2 className="text-2xl font-bold">Akses Konten Premium</h2>
-        <p className="text-gray-600 my-4">
-          Prompt ini hanya tersedia untuk pengguna premium.
-        </p>
-        <button
-          onClick={() => setCurrentPage("offerings")}
-          className="bg-yellow-400 text-black font-bold py-3 px-6 rounded-lg"
-        >
-          Lihat Paket Premium
-        </button>
-      </div>
-    );
-  }
-
   if (error)
     return <div className="text-center py-16 text-red-500">Error: {error}</div>;
-
   if (!prompt)
     return <div className="text-center py-16">Prompt tidak ditemukan.</div>;
 
@@ -186,7 +145,7 @@ const PromptDetailPage = ({
         </div>
       )}
 
-      {prompt.whatItDoes && (
+      {prompt.whatItDoes && prompt.whatItDoes.length > 0 && (
         <div className="mb-12">
           <div className="flex items-center space-x-3 mb-4">
             <GearIcon />
@@ -200,7 +159,7 @@ const PromptDetailPage = ({
         </div>
       )}
 
-      {prompt.tips && (
+      {prompt.tips && prompt.tips.length > 0 && (
         <div className="mb-12">
           <div className="flex items-center space-x-3 mb-4">
             <BulbIcon />
@@ -221,9 +180,12 @@ const PromptDetailPage = ({
         >
           {copySuccess ? "Disalin!" : "Copy"}
         </button>
-        <pre className="whitespace-pre-wrap font-sans text-base leading-relaxed pr-24">
-          {prompt.promptText}
-        </pre>
+        <div
+          className="prose prose-invert max-w-none"
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(prompt.promptText),
+          }}
+        />
       </div>
 
       {copySuccess && (
@@ -232,7 +194,7 @@ const PromptDetailPage = ({
         </div>
       )}
 
-      {prompt.howToUse && (
+      {prompt.howToUse && prompt.howToUse.length > 0 && (
         <div className="mb-12">
           <div className="flex items-center space-x-3 mb-4">
             <QuestionIcon />

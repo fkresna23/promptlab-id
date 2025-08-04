@@ -72,7 +72,17 @@ export const getAllPrompts = async (req: Request, res: Response) => {
 // @access  Private/Admin
 export const createPrompt = async (req: Request, res: Response) => {
   try {
-    const { title, description, promptText, category, isPremium } = req.body;
+    // Ambil field baru dari body request
+    const {
+      title,
+      description,
+      promptText,
+      category,
+      isPremium,
+      whatItDoes,
+      tips,
+      howToUse,
+    } = req.body;
 
     const prompt = new Prompt({
       user: req.user?._id,
@@ -81,11 +91,14 @@ export const createPrompt = async (req: Request, res: Response) => {
       promptText,
       category,
       isPremium,
+      whatItDoes, // <-- Tambahkan ini
+      tips, // <-- Tambahkan ini
+      howToUse, // <-- Tambahkan ini
     });
 
     const createdPrompt = await prompt.save();
     res.status(201).json(createdPrompt);
   } catch (error) {
-    res.status(500).json({ message: "Server Error while creating prompt" });
+    // ...
   }
 };
