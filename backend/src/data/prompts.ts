@@ -1,6 +1,9 @@
 export const promptsData = [
   {
     title: "Schedule Posts with Social Media Tools",
+    // TAMBAHKAN 'description'
+    description:
+      "Create an effective social media strategy with this ChatGPT prompt, focusing on content calendars, audience engagement, and optimal posting times.",
     promptText:
       "Adopt the role of an expert social media strategist tasked with creating a comprehensive social media posting schedule...\n\n#INFORMATION ABOUT ME:\nSocial media platform: [INSERT SOCIAL MEDIA PLATFORM]\nProduct/Service to promote: [INSERT PRODUCT/SERVICE]\n...",
     keySentence:
@@ -23,23 +26,7 @@ export const promptsData = [
   // Tambahkan data detail untuk prompt lainnya di sini
   {
     title: "Implement Live Chat Support on Website",
+    description: "Implement live chat support with this ChatGPT prompt...", // TAMBAHKAN INI
     promptText: "Implement live chat support with this ChatGPT prompt...",
-  },
-  {
-    title: "Enhance Conflict Resolution Skills",
-    promptText:
-      "Master conflict resolution in sales with this ChatGPT prompt...",
-  },
-  {
-    title: "Maintain Strong Partner Relationships",
-    promptText: "Develop a tailored partner relationship management plan...",
-  },
-  {
-    title: "Optimize Website for Conversion Rate Optimization",
-    promptText: "Boost online sales with this ChatGPT prompt...",
-  },
-  {
-    title: "Follow Up on Proposal Submissions Promptly",
-    promptText: "Enhance client engagement with this ChatGPT prompt...",
   },
 ];

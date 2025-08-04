@@ -10,6 +10,7 @@ import OfferingsPage from "./pages/OfferingsPage";
 import MyProfilePage from "./pages/MyProfilePage";
 import MyProductsPage from "./pages/MyProductsPage";
 import ContactPage from "./pages/ContactPage";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
 
 interface UserInfo {
   _id: string;
@@ -114,6 +115,19 @@ function App() {
             <CategoryList handleCategoryClick={handleCategoryClick} />
           </div>
         );
+      case "adminDashboard":
+        // Pastikan hanya admin yang bisa akses, jika tidak, lempar ke halaman utama
+        if (userInfo?.role !== "admin") {
+          setCurrentPage("home");
+          return null; // atau return <HomePage />;
+        }
+        return (
+          <div className="bg-gray-100 min-h-screen">
+            <AdminDashboardPage />
+          </div>
+        );
+
+      case "signup":
     }
   };
 

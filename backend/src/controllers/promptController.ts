@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import Prompt from "../models/PromptModel";
 import mongoose from "mongoose";
 
+// @desc    Get prompts by category for public view
+// @route   GET /api/prompts/category/:categoryId
+// @access  Public
 export const getPromptsByCategory = async (req: Request, res: Response) => {
   try {
     const { categoryId } = req.params;
@@ -17,6 +20,9 @@ export const getPromptsByCategory = async (req: Request, res: Response) => {
   }
 };
 
+// @desc    Get a single prompt by ID
+// @route   GET /api/prompts/:id
+// @access  Private (requires token)
 export const getPromptById = async (req: Request, res: Response) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -25,27 +31,61 @@ export const getPromptById = async (req: Request, res: Response) => {
     const prompt = await Prompt.findById(req.params.id);
 
     if (prompt) {
-      // Jika prompt adalah premium, cek peran pengguna
       if (prompt.isPremium) {
-        // req.user akan tersedia karena middleware 'protect'
         if (
           req.user &&
           (req.user.role === "premium" || req.user.role === "admin")
         ) {
-          res.json(prompt); // Pengguna premium, kirim data lengkap
+          res.json(prompt);
         } else {
-          // Pengguna bukan premium, kirim 403 Forbidden
           return res.status(403).json({
             message: "You need a premium plan to access this prompt.",
           });
         }
       } else {
-        res.json(prompt); // Prompt gratis, kirim data lengkap
+        res.json(prompt);
       }
     } else {
       res.status(404).json({ message: "Prompt not found" });
     }
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// @desc    Get all prompts for admin view
+// @route   GET /api/prompts/all
+// @access  Private/Admin
+export const getAllPrompts = async (req: Request, res: Response) => {
+  try {
+    const prompts = await Prompt.find({})
+      .populate("category", "title")
+      .sort({ createdAt: -1 });
+    res.json(prompts);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// @desc    Create a new prompt
+// @route   POST /api/prompts
+// @access  Private/Admin
+export const createPrompt = async (req: Request, res: Response) => {
+  try {
+    const { title, description, promptText, category, isPremium } = req.body;
+
+    const prompt = new Prompt({
+      user: req.user?._id,
+      title,
+      description,
+      promptText,
+      category,
+      isPremium,
+    });
+
+    const createdPrompt = await prompt.save();
+    res.status(201).json(createdPrompt);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error while creating prompt" });
   }
 };

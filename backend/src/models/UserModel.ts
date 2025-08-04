@@ -38,7 +38,6 @@ userSchema.pre("save", async function (next) {
 });
 
 // Metode untuk membandingkan password
-// PERBAIKAN: Menambahkan tipe 'string' pada parameter.
 userSchema.methods.matchPassword = async function (
   enteredPassword: string
 ): Promise<boolean> {
@@ -46,6 +45,5 @@ userSchema.methods.matchPassword = async function (
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Gunakan interface IUser saat membuat model
 const User: Model<IUser> = mongoose.model<IUser>("User", userSchema);
 export default User;

@@ -9,6 +9,7 @@ const promptSchema = new mongoose.Schema(
       ref: "Category",
     },
     title: { type: String, required: true },
+    description: { type: String, required: true },
     promptText: { type: String, required: true },
     isPremium: { type: Boolean, required: true, default: false },
     keySentence: { type: String, required: false },

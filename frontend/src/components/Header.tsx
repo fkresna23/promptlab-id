@@ -120,7 +120,7 @@ const Header: React.FC<HeaderProps> = ({
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(
       userInfo.name
     )}&background=FFD700&color=000000&size=40&bold=true`;
-  }, [userInfo?.name]);
+  }, [userInfo]); // <-- UBAH DI SINI
 
   // Navigation items
   const navItems = [
@@ -265,6 +265,19 @@ const Header: React.FC<HeaderProps> = ({
                             <span>My Products</span>
                           </button>
                         </li>
+                        {/* TAMBAHKAN KODE INI */}
+                        {userInfo && userInfo.role === "admin" && (
+                          <li>
+                            <button
+                              onClick={() => handleNav("adminDashboard")}
+                              className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors duration-150 flex items-center space-x-3"
+                            >
+                              {/* Anda bisa menambahkan ikon di sini */}
+                              <span>Admin Dashboard</span>
+                            </button>
+                          </li>
+                        )}
+                        {/* AKHIR DARI KODE TAMBAHAN */}
                         <li className="border-t border-gray-200 mt-2 pt-2">
                           <button
                             onClick={handleLogout}

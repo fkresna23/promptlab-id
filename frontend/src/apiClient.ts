@@ -8,7 +8,21 @@ const handleResponse = async (response: Response) => {
   return data;
 };
 
-// Extended interfaces for better type safety
+const getAuthHeaders = (): Record<string, string> => {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  const userInfoString = localStorage.getItem("userInfo");
+  if (userInfoString) {
+    const userInfo = JSON.parse(userInfoString);
+    if (userInfo.token) {
+      headers["Authorization"] = `Bearer ${userInfo.token}`;
+    }
+  }
+  return headers;
+};
+
+// Interfaces
 export interface Category {
   _id: string;
   title: string;
@@ -20,9 +34,10 @@ export interface Category {
 export interface Prompt {
   _id: string;
   title: string;
+  description: string;
   promptText: string;
-  isPremium?: boolean;
-  category?: string;
+  isPremium: boolean; // Dibuat menjadi 'required', bukan opsional
+  category?: Category; // Diisi oleh .populate()
   tags?: string[];
   keySentence?: string;
   whatItDoes?: string[];
@@ -48,6 +63,15 @@ export interface UserInfo {
   name: string;
   email: string;
   token: string;
+  role: "user" | "premium" | "admin";
+}
+
+export interface PromptData {
+  title: string;
+  description: string;
+  promptText: string;
+  category: string;
+  isPremium: boolean;
 }
 
 // API Functions
@@ -67,7 +91,7 @@ export const getPromptsByCategory = async (
 
 export const getPromptById = async (promptId: string): Promise<Prompt> => {
   const response = await fetch(`${API_BASE_URL}/api/prompts/${promptId}`, {
-    headers: getAuthHeaders(), // Gunakan helper di sini
+    headers: getAuthHeaders(),
   });
   return handleResponse(response);
 };
@@ -92,38 +116,18 @@ export const loginUser = async (
   return handleResponse(response);
 };
 
-// Search and filter functions (can be expanded later)
-export const searchPrompts = async (
-  query: string,
-  filters?: {
-    category?: string;
-    isPremium?: boolean;
-    tags?: string[];
-  }
-): Promise<Prompt[]> => {
-  const params = new URLSearchParams();
-  params.append("q", query);
-
-  if (filters?.category) params.append("category", filters.category);
-  if (filters?.isPremium !== undefined)
-    params.append("premium", filters.isPremium.toString());
-  if (filters?.tags) params.append("tags", filters.tags.join(","));
-
-  const response = await fetch(`${API_BASE_URL}/api/prompts/search?${params}`);
+export const getAllPrompts = async (): Promise<Prompt[]> => {
+  const response = await fetch(`${API_BASE_URL}/api/prompts/all`, {
+    headers: getAuthHeaders(),
+  });
   return handleResponse(response);
 };
 
-const getAuthHeaders = (): Record<string, string> => {
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
-
-  const userInfoString = localStorage.getItem("userInfo");
-  if (userInfoString) {
-    const userInfo = JSON.parse(userInfoString);
-    if (userInfo.token) {
-      headers["Authorization"] = `Bearer ${userInfo.token}`;
-    }
-  }
-  return headers;
+export const createPrompt = async (promptData: PromptData): Promise<Prompt> => {
+  const response = await fetch(`${API_BASE_URL}/api/prompts`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(promptData),
+  });
+  return handleResponse(response);
 };
