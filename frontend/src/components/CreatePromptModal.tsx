@@ -32,8 +32,20 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Reset state saat modal ditutup atau dibuka
   useEffect(() => {
     if (isOpen) {
+      setTitle("");
+      setDescription("");
+      setPromptText("");
+      setCategoryId("");
+      setIsPremium(false);
+      setWhatItDoesText("");
+      setTipsText("");
+      setHowToUseText("");
+      setError(null);
+      setIsLoading(false);
+
       getCategories()
         .then((data) => {
           setCategories(data);
@@ -76,8 +88,8 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
 
     try {
       await createPrompt(promptData);
-      onSuccess();
-      onClose();
+      onSuccess(); // Panggil fetchPrompts di parent
+      onClose(); // Tutup modal
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Terjadi error tidak diketahui."
@@ -90,15 +102,29 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <h2 className="text-2xl font-bold mb-6">Tambah Prompt Baru</h2>
-        {error && (
-          <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
-            {error}
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
+      <div className="bg-white p-6 md:p-8 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
+        {/* Tambahkan overlay loading */}
+        {isLoading && (
+          <div className="absolute inset-0 bg-white bg-opacity-75 flex justify-center items-center z-10 rounded-lg">
+            <div className="text-center">
+              <p className="text-lg font-semibold">Menyimpan...</p>
+              <p className="text-sm">Mohon tunggu sebentar.</p>
+            </div>
           </div>
         )}
-        <form onSubmit={handleSubmit}>
+        <h2 className="text-2xl font-bold mb-6">Tambah Prompt Baru</h2>
+        {error && (
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4"
+            role="alert"
+          >
+            <strong className="font-bold">Error: </strong>
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
+        <form onSubmit={handleSubmit} noValidate>
+          {/* ... sisa form tidak berubah ... */}
           <div className="mb-4">
             <label className="block text-gray-700 font-bold mb-2">Judul</label>
             <input
@@ -170,7 +196,7 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 pt-14 md:pt-0 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-14 md:pt-0 mb-6">
             <div>
               <label className="block text-gray-700 font-bold mb-2">
                 Kategori
@@ -178,8 +204,12 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
               <select
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
+                required
                 className="w-full px-3 py-2 border rounded bg-white"
               >
+                <option value="" disabled>
+                  Pilih kategori...
+                </option>
                 {categories.map((cat) => (
                   <option key={cat._id} value={cat._id}>
                     {cat.title}
@@ -207,7 +237,8 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded"
+              disabled={isLoading}
+              className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded disabled:opacity-50"
             >
               Batal
             </button>
