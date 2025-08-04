@@ -124,7 +124,6 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
           </div>
         )}
         <form onSubmit={handleSubmit} noValidate>
-          {/* ... sisa form tidak berubah ... */}
           <div className="mb-4">
             <label className="block text-gray-700 font-bold mb-2">Judul</label>
             <input
