@@ -17,6 +17,7 @@ export const registerUser = async (req: Request, res: Response) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role, // <-- TAMBAHKAN INI
         token: generateToken(user._id.toString()),
       });
     } else {
@@ -38,6 +39,7 @@ export const loginUser = async (req: Request, res: Response) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role, // <-- TAMBAHKAN INI
         token: generateToken(user._id.toString()),
       });
     } else {
