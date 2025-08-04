@@ -94,9 +94,11 @@ export const createPrompt = async (req: Request, res: Response) => {
 
     // Validasi input yang lebih ketat
     if (!title || !description || !promptText || !category) {
-      return res.status(400).json({
-        message: "Judul, deskripsi, teks prompt, dan kategori wajib diisi.",
-      });
+      return res
+        .status(400)
+        .json({
+          message: "Judul, deskripsi, teks prompt, dan kategori wajib diisi.",
+        });
     }
 
     const prompt = new Prompt({

@@ -19,6 +19,7 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
   onClose,
   onSuccess,
 }) => {
+  // Menggunakan satu state untuk semua data form
   const [formData, setFormData] = useState<PromptData>({
     title: "",
     description: "",
@@ -28,6 +29,13 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
     whatItDoes: [],
     tips: [],
     howToUse: [],
+  });
+
+  // State terpisah untuk teks mentah dari textarea
+  const [rawTextArea, setRawTextArea] = useState({
+    whatItDoes: "",
+    tips: "",
+    howToUse: "",
   });
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -48,6 +56,7 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
         tips: [],
         howToUse: [],
       });
+      setRawTextArea({ whatItDoes: "", tips: "", howToUse: "" });
       setError(null);
       setIsLoading(false);
 
@@ -56,7 +65,6 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
         .then((data) => {
           setCategories(data);
           if (data.length > 0) {
-            // Set kategori default
             setFormData((prev) => ({ ...prev, category: data[0]._id }));
           }
         })
@@ -76,8 +84,12 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
     }));
   };
 
+  // Fungsi yang sekarang akan kita gunakan
   const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    // Update state untuk teks mentah
+    setRawTextArea((prev) => ({ ...prev, [name]: value }));
+    // Update state utama dengan data yang sudah diolah menjadi array
     setFormData((prev) => ({
       ...prev,
       [name]: value.split("\n").filter((line) => line.trim() !== ""),
@@ -100,8 +112,8 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
 
     try {
       await createPrompt(formData);
-      onSuccess(); // Panggil fetchPrompts di parent untuk refresh data
-      onClose(); // Tutup modal
+      onSuccess();
+      onClose();
     } catch (err) {
       setError(
         err instanceof Error
@@ -167,6 +179,47 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
               className="w-full px-3 py-2 border rounded-md"
             />
           </div>
+
+          {/* INI BAGIAN YANG DIPERBAIKI */}
+          <div className="mb-4">
+            <label className="block text-gray-700 font-bold mb-2">
+              What This Prompt Does
+            </label>
+            <textarea
+              name="whatItDoes"
+              value={rawTextArea.whatItDoes}
+              onChange={handleTextAreaChange}
+              rows={3}
+              className="w-full px-3 py-2 border rounded-md"
+              placeholder="Masukkan setiap poin di baris baru..."
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-bold mb-2">Tips</label>
+            <textarea
+              name="tips"
+              value={rawTextArea.tips}
+              onChange={handleTextAreaChange}
+              rows={3}
+              className="w-full px-3 py-2 border rounded-md"
+              placeholder="Masukkan setiap tips di baris baru..."
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-bold mb-2">
+              How To Use The Prompt
+            </label>
+            <textarea
+              name="howToUse"
+              value={rawTextArea.howToUse}
+              onChange={handleTextAreaChange}
+              rows={3}
+              className="w-full px-3 py-2 border rounded-md"
+              placeholder="Masukkan setiap cara penggunaan di baris baru..."
+            />
+          </div>
+          {/* AKHIR BAGIAN YANG DIPERBAIKI */}
+
           <div className="mb-4">
             <label className="block text-gray-700 font-bold mb-2">
               Teks Prompt Lengkap *
@@ -179,7 +232,7 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
               />
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-14 md:pt-0 mb-6">
             <div>
               <label className="block text-gray-700 font-bold mb-2">
                 Kategori *

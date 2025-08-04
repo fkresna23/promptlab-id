@@ -38,18 +38,16 @@ export const protect = async (
       }
 
       req.user = user;
-      next();
+      return next(); // Lanjutkan ke middleware/controller berikutnya
     } catch (error) {
-      console.error(error);
+      console.error("Token verification failed:", error);
       // Jika token gagal diverifikasi, kirim error
       return res.status(401).json({ message: "Not authorized, token failed" });
     }
   }
 
-  if (!token) {
-    // Jika tidak ada token sama sekali, kirim error
-    res.status(401).json({ message: "Not authorized, no token" });
-  }
+  // Jika tidak ada token sama sekali, kirim error
+  return res.status(401).json({ message: "Not authorized, no token" });
 };
 
 export const premiumAccess = (

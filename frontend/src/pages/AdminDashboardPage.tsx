@@ -1,33 +1,43 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getAllPrompts, type Prompt } from "../apiClient";
-import CreatePromptModal from "../components/CreatePromptModal"; // Impor modal
+import CreatePromptModal from "../components/CreatePromptModal";
 
 const AdminDashboardPage = () => {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // State untuk mengontrol modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const fetchPrompts = async () => {
+  const fetchPrompts = useCallback(async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const data = await getAllPrompts();
       setPrompts(data);
     } catch (err) {
-      setError("Gagal memuat data prompt.");
+      setError("Gagal memuat data prompt. Silakan coba lagi.");
       console.error(err);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchPrompts();
-  }, []);
+  }, [fetchPrompts]);
 
-  if (isLoading)
+  const handleCreateSuccess = () => {
+    // Setelah prompt berhasil dibuat, panggil fetchPrompts lagi untuk refresh data
+    fetchPrompts();
+  };
+
+  if (isLoading && prompts.length === 0) {
     return <div className="text-center p-8">Loading prompts...</div>;
-  if (error) return <div className="text-center p-8 text-red-500">{error}</div>;
+  }
+
+  if (error) {
+    return <div className="text-center p-8 text-red-500">{error}</div>;
+  }
 
   return (
     <>
@@ -35,14 +45,14 @@ const AdminDashboardPage = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Admin Dashboard</h1>
           <button
-            onClick={() => setIsModalOpen(true)} // Buka modal saat tombol diklik
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={() => setIsModalOpen(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-transform transform hover:scale-105"
           >
             + Tambah Prompt Baru
           </button>
         </div>
 
-        <div className="bg-white shadow-md rounded-lg overflow-hidden">
+        <div className="bg-white shadow-md rounded-lg overflow-x-auto">
           <table className="min-w-full leading-normal">
             <thead>
               <tr>
@@ -110,7 +120,7 @@ const AdminDashboardPage = () => {
       <CreatePromptModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSuccess={fetchPrompts} // Refresh data setelah berhasil
+        onSuccess={handleCreateSuccess}
       />
     </>
   );
