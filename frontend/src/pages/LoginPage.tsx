@@ -1,17 +1,9 @@
 import React, { useState } from "react";
-import { loginUser } from "../apiClient";
-
-// Definisikan tipe data yang dibutuhkan
-interface UserInfo {
-  _id: string;
-  name: string;
-  email: string;
-  token: string;
-}
+import { loginUser, type UserInfo } from "../apiClient";
 
 interface LoginPageProps {
   setCurrentPage: (page: string) => void;
-  setUserInfo: (userInfo: UserInfo) => void;
+  setUserInfo: React.Dispatch<React.SetStateAction<UserInfo | null>>; // PERBAIKAN TIPE DI SINI
 }
 
 const GoogleIcon = () => (

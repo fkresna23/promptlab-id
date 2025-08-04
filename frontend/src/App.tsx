@@ -11,13 +11,7 @@ import MyProfilePage from "./pages/MyProfilePage";
 import MyProductsPage from "./pages/MyProductsPage";
 import ContactPage from "./pages/ContactPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
-
-interface UserInfo {
-  _id: string;
-  name: string;
-  email: string;
-  token: string;
-}
+import { type UserInfo } from "./apiClient";
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
@@ -30,7 +24,9 @@ function App() {
 
   useEffect(() => {
     const storedUserInfo = localStorage.getItem("userInfo");
-    if (storedUserInfo) setUserInfo(JSON.parse(storedUserInfo));
+    if (storedUserInfo) {
+      setUserInfo(JSON.parse(storedUserInfo));
+    }
   }, []);
 
   const logoutHandler = () => {
@@ -64,6 +60,16 @@ function App() {
         return (
           <div className="bg-[#F3F3F3] py-10">
             <MyProductsPage />
+          </div>
+        );
+      case "adminDashboard":
+        if (userInfo?.role !== "admin") {
+          setCurrentPage("home");
+          return null;
+        }
+        return (
+          <div className="bg-gray-100 min-h-screen">
+            <AdminDashboardPage />
           </div>
         );
       case "signup":
@@ -115,19 +121,6 @@ function App() {
             <CategoryList handleCategoryClick={handleCategoryClick} />
           </div>
         );
-      case "adminDashboard":
-        // Pastikan hanya admin yang bisa akses, jika tidak, lempar ke halaman utama
-        if (userInfo?.role !== "admin") {
-          setCurrentPage("home");
-          return null; // atau return <HomePage />;
-        }
-        return (
-          <div className="bg-gray-100 min-h-screen">
-            <AdminDashboardPage />
-          </div>
-        );
-
-      case "signup":
     }
   };
 

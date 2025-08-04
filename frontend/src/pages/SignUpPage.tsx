@@ -1,16 +1,9 @@
-import { useState } from "react";
-import { registerUser } from "../apiClient";
-
-interface UserInfo {
-  _id: string;
-  name: string;
-  email: string;
-  token: string;
-}
+import React, { useState } from "react";
+import { registerUser, type UserInfo } from "../apiClient";
 
 interface SignUpPageProps {
   setCurrentPage: (page: string) => void;
-  setUserInfo: (userInfo: UserInfo) => void;
+  setUserInfo: React.Dispatch<React.SetStateAction<UserInfo | null>>; // PERBAIKAN TIPE DI SINI
 }
 
 const GoogleIcon = () => (
@@ -49,7 +42,7 @@ const SignUpPage: React.FC<SignUpPageProps> = ({
     setIsLoading(true);
     setError(null);
     try {
-      const data = await registerUser({ name, email, password }); // Gunakan fungsi dari apiClient
+      const data = await registerUser({ name, email, password });
       localStorage.setItem("userInfo", JSON.stringify(data));
       setUserInfo(data);
       setCurrentPage("home");

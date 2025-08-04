@@ -22,7 +22,7 @@ const getAuthHeaders = (): Record<string, string> => {
   return headers;
 };
 
-// Interfaces
+// --- INTERFACES ---
 export interface Category {
   _id: string;
   title: string;
@@ -36,8 +36,8 @@ export interface Prompt {
   title: string;
   description: string;
   promptText: string;
-  isPremium: boolean; // Dibuat menjadi 'required', bukan opsional
-  category?: Category; // Diisi oleh .populate()
+  isPremium: boolean;
+  category?: Category | string;
   tags?: string[];
   keySentence?: string;
   whatItDoes?: string[];
@@ -45,6 +45,14 @@ export interface Prompt {
   howToUse?: string[];
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface UserInfo {
+  _id: string;
+  name: string;
+  email: string;
+  token: string;
+  role: "user" | "premium" | "admin";
 }
 
 export interface UserData {
@@ -58,14 +66,6 @@ export interface LoginCredentials {
   password: string;
 }
 
-export interface UserInfo {
-  _id: string;
-  name: string;
-  email: string;
-  token: string;
-  role: "user" | "premium" | "admin";
-}
-
 export interface PromptData {
   title: string;
   description: string;
@@ -74,7 +74,7 @@ export interface PromptData {
   isPremium: boolean;
 }
 
-// API Functions
+// --- API FUNCTIONS ---
 export const getCategories = async (): Promise<Category[]> => {
   const response = await fetch(`${API_BASE_URL}/api/categories`);
   return handleResponse(response);

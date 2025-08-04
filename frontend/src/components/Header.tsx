@@ -1,11 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-
-interface UserInfo {
-  _id: string;
-  name: string;
-  email: string;
-  token: string;
-}
+import { type UserInfo } from "../apiClient";
 
 // Icons Components
 const ProfileMenuIcon = () => (
@@ -75,7 +69,6 @@ const Header: React.FC<HeaderProps> = ({
   const [avatarLoaded, setAvatarLoaded] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -86,7 +79,6 @@ const Header: React.FC<HeaderProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Close mobile menu on resize
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
@@ -97,7 +89,6 @@ const Header: React.FC<HeaderProps> = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Optimize navigation handler
   const handleNav = useCallback(
     (page: string) => {
       setCurrentPage(page);
@@ -107,22 +98,19 @@ const Header: React.FC<HeaderProps> = ({
     [setCurrentPage]
   );
 
-  // Optimize logout handler
   const handleLogout = useCallback(() => {
     logoutHandler();
     setIsProfileMenuOpen(false);
     setIsMobileMenuOpen(false);
   }, [logoutHandler]);
 
-  // Memoize avatar URL to prevent flickering
   const avatarUrl = useMemo(() => {
     if (!userInfo) return "";
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(
       userInfo.name
     )}&background=FFD700&color=000000&size=40&bold=true`;
-  }, [userInfo]); // <-- UBAH DI SINI
+  }, [userInfo]);
 
-  // Navigation items
   const navItems = [
     { label: "Prompts", page: "home" },
     { label: "Bundles", page: "offerings" },
@@ -133,7 +121,6 @@ const Header: React.FC<HeaderProps> = ({
     <header className="bg-[#111111] text-white sticky top-0 z-50 shadow-lg">
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo Section */}
           <div className="flex items-center flex-shrink-0">
             <button
               onClick={() => handleNav("home")}
@@ -148,7 +135,6 @@ const Header: React.FC<HeaderProps> = ({
             </button>
           </div>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <button
@@ -161,7 +147,6 @@ const Header: React.FC<HeaderProps> = ({
             ))}
           </div>
 
-          {/* Desktop Right Section */}
           <div className="hidden md:flex items-center space-x-4">
             {userInfo ? (
               <div className="flex items-center space-x-4">
@@ -181,7 +166,6 @@ const Header: React.FC<HeaderProps> = ({
                   >
                     <ProfileMenuIcon />
                     <div className="relative">
-                      {/* Avatar Placeholder */}
                       {!avatarLoaded && (
                         <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
                           <span className="text-xs font-semibold text-gray-300">
@@ -189,7 +173,6 @@ const Header: React.FC<HeaderProps> = ({
                           </span>
                         </div>
                       )}
-                      {/* Actual Avatar */}
                       <img
                         className={`w-10 h-10 rounded-full transition-opacity duration-200 ${
                           avatarLoaded
@@ -209,7 +192,6 @@ const Header: React.FC<HeaderProps> = ({
                     </div>
                   </button>
 
-                  {/* Profile Dropdown */}
                   {isProfileMenuOpen && (
                     <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 text-black overflow-hidden">
                       <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
@@ -265,19 +247,32 @@ const Header: React.FC<HeaderProps> = ({
                             <span>My Products</span>
                           </button>
                         </li>
-                        {/* TAMBAHKAN KODE INI */}
                         {userInfo && userInfo.role === "admin" && (
                           <li>
                             <button
                               onClick={() => handleNav("adminDashboard")}
                               className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors duration-150 flex items-center space-x-3"
                             >
-                              {/* Anda bisa menambahkan ikon di sini */}
+                              <div className="w-5 h-5 text-gray-500">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={1.5}
+                                  stroke="currentColor"
+                                  className="w-6 h-6"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
+                                  />
+                                </svg>
+                              </div>
                               <span>Admin Dashboard</span>
                             </button>
                           </li>
                         )}
-                        {/* AKHIR DARI KODE TAMBAHAN */}
                         <li className="border-t border-gray-200 mt-2 pt-2">
                           <button
                             onClick={handleLogout}
@@ -323,7 +318,6 @@ const Header: React.FC<HeaderProps> = ({
             )}
           </div>
 
-          {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-2">
             {userInfo && (
               <div className="relative">
@@ -359,7 +353,6 @@ const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="md:hidden border-t border-gray-700 bg-[#111111]">
             <div className="px-2 pt-2 pb-3 space-y-1">
@@ -395,6 +388,14 @@ const Header: React.FC<HeaderProps> = ({
                   >
                     My Products
                   </button>
+                  {userInfo.role === "admin" && (
+                    <button
+                      onClick={() => handleNav("adminDashboard")}
+                      className="w-full text-left block px-3 py-2 text-white hover:text-yellow-400 hover:bg-gray-800 transition-colors duration-200 rounded-md"
+                    >
+                      Admin Dashboard
+                    </button>
+                  )}
                   <button
                     onClick={handleLogout}
                     className="w-full text-left block px-3 py-2 text-red-400 hover:bg-red-900 hover:bg-opacity-50 transition-colors duration-200 rounded-md"
