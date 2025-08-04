@@ -10,7 +10,7 @@ import OfferingsPage from "./pages/OfferingsPage";
 import MyProfilePage from "./pages/MyProfilePage";
 import MyProductsPage from "./pages/MyProductsPage";
 import ContactPage from "./pages/ContactPage";
-import AdminDashboardPage from "./pages/AdminDashboardPage";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage"; // <-- PERBARUI PATH INI
 import { type UserInfo } from "./apiClient";
 
 function App() {
@@ -25,7 +25,12 @@ function App() {
   useEffect(() => {
     const storedUserInfo = localStorage.getItem("userInfo");
     if (storedUserInfo) {
-      setUserInfo(JSON.parse(storedUserInfo));
+      try {
+        setUserInfo(JSON.parse(storedUserInfo));
+      } catch (e) {
+        console.error("Failed to parse user info from localStorage", e);
+        localStorage.removeItem("userInfo");
+      }
     }
   }, []);
 
@@ -65,7 +70,7 @@ function App() {
       case "adminDashboard":
         if (userInfo?.role !== "admin") {
           setCurrentPage("home");
-          return null;
+          return null; // Atau tampilkan halaman "Tidak Diizinkan"
         }
         return (
           <div className="bg-gray-100 min-h-screen">
@@ -125,7 +130,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div>
       <Header
         setCurrentPage={setCurrentPage}
         userInfo={userInfo}
