@@ -16,6 +16,7 @@ export const getPromptsByCategory = async (req: Request, res: Response) => {
     );
     res.json(prompts);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
@@ -49,6 +50,7 @@ export const getPromptById = async (req: Request, res: Response) => {
       res.status(404).json({ message: "Prompt not found" });
     }
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
@@ -63,6 +65,7 @@ export const getAllPrompts = async (req: Request, res: Response) => {
       .sort({ createdAt: -1 });
     res.json(prompts);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
@@ -72,7 +75,10 @@ export const getAllPrompts = async (req: Request, res: Response) => {
 // @access  Private/Admin
 export const createPrompt = async (req: Request, res: Response) => {
   try {
-    // Ambil field baru dari body request
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
     const {
       title,
       description,
@@ -85,7 +91,7 @@ export const createPrompt = async (req: Request, res: Response) => {
     } = req.body;
 
     const prompt = new Prompt({
-      user: req.user?._id,
+      user: req.user._id, // **INI PERBAIKAN UTAMA**
       title,
       description,
       promptText,
@@ -99,13 +105,12 @@ export const createPrompt = async (req: Request, res: Response) => {
     const createdPrompt = await prompt.save();
     res.status(201).json(createdPrompt);
   } catch (error) {
-    console.error(error); // Log error untuk debugging
-    if (error instanceof Error) {
-      res
+    console.error(error);
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res
         .status(400)
-        .json({ message: "Data prompt tidak valid", error: error.message });
-    } else {
-      res.status(500).json({ message: "Server Error" });
+        .json({ message: "Validation Error", errors: error.errors });
     }
+    res.status(500).json({ message: "Server Error" });
   }
 };
