@@ -65,6 +65,7 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
         .then((data) => {
           setCategories(data);
           if (data.length > 0) {
+            // Set kategori default
             setFormData((prev) => ({ ...prev, category: data[0]._id }));
           }
         })
@@ -180,7 +181,6 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
             />
           </div>
 
-          {/* INI BAGIAN YANG DIPERBAIKI */}
           <div className="mb-4">
             <label className="block text-gray-700 font-bold mb-2">
               What This Prompt Does
@@ -218,7 +218,6 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
               placeholder="Masukkan setiap cara penggunaan di baris baru..."
             />
           </div>
-          {/* AKHIR BAGIAN YANG DIPERBAIKI */}
 
           <div className="mb-4">
             <label className="block text-gray-700 font-bold mb-2">
