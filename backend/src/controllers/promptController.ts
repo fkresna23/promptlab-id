@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Prompt from "../models/PromptModel";
 import mongoose from "mongoose";
 
+// ... (fungsi getPromptsByCategory, getPromptById, getAllPrompts tetap sama) ...
 // @desc    Get prompts by category for public view
 // @route   GET /api/prompts/category/:categoryId
 // @access  Public
@@ -75,11 +76,9 @@ export const getAllPrompts = async (req: Request, res: Response) => {
 // @access  Private/Admin
 export const createPrompt = async (req: Request, res: Response) => {
   try {
-    // Pastikan user terautentikasi oleh middleware protect
-    if (!req.user || !req.user._id) {
-      return res
-        .status(401)
-        .json({ message: "Not authorized, user not found" });
+    // Middleware 'protect' sudah memastikan req.user ada
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authorized" });
     }
 
     const {
@@ -93,34 +92,34 @@ export const createPrompt = async (req: Request, res: Response) => {
       howToUse,
     } = req.body;
 
-    // Validasi dasar untuk field yang wajib ada
+    // Validasi input yang lebih ketat
     if (!title || !description || !promptText || !category) {
-      return res
-        .status(400)
-        .json({ message: "Please fill all required fields." });
+      return res.status(400).json({
+        message: "Judul, deskripsi, teks prompt, dan kategori wajib diisi.",
+      });
     }
 
     const prompt = new Prompt({
-      user: req.user._id, // Ambil _id dari user yang sudah di-attach oleh middleware
+      user: req.user._id,
       title,
       description,
       promptText,
       category,
       isPremium,
-      whatItDoes,
-      tips,
-      howToUse,
+      whatItDoes: whatItDoes || [],
+      tips: tips || [],
+      howToUse: howToUse || [],
     });
 
     const createdPrompt = await prompt.save();
     res.status(201).json(createdPrompt);
   } catch (error) {
-    console.error("Error in createPrompt:", error);
+    console.error("Error creating prompt:", error);
     if (error instanceof mongoose.Error.ValidationError) {
-      return res
-        .status(400)
-        .json({ message: "Validation failed", errors: error.errors });
+      // Mengambil pesan error pertama dari validasi Mongoose
+      const messages = Object.values(error.errors).map((e) => e.message);
+      return res.status(400).json({ message: messages.join(", ") });
     }
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Server error saat membuat prompt." });
   }
 };

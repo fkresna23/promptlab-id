@@ -31,6 +31,7 @@ export const protect = async (
       const user = await User.findById(decoded.id).select("-password");
 
       if (!user) {
+        // Jika user tidak ditemukan (misalnya sudah dihapus), kirim error
         return res
           .status(401)
           .json({ message: "Not authorized, user not found" });
@@ -40,11 +41,13 @@ export const protect = async (
       next();
     } catch (error) {
       console.error(error);
-      res.status(401).json({ message: "Not authorized, token failed" });
+      // Jika token gagal diverifikasi, kirim error
+      return res.status(401).json({ message: "Not authorized, token failed" });
     }
   }
 
   if (!token) {
+    // Jika tidak ada token sama sekali, kirim error
     res.status(401).json({ message: "Not authorized, no token" });
   }
 };
