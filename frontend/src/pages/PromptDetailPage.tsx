@@ -79,40 +79,38 @@ const PromptDetailPage = ({
 }: PromptDetailPageProps) => {
   const [prompt, setPrompt] = useState<Prompt | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); // Deklarasi sudah ada
   const [copySuccess, setCopySuccess] = useState("");
 
   useEffect(() => {
     const fetchPromptDetail = async () => {
       if (!promptId) return;
-      // setIsLoading(true); // BARIS INI BISA DIHAPUS, karena sudah true dari state awal
+
+      // Reset state sebelum fetch baru
+      setIsLoading(true);
+      setError(null);
+
       try {
         const data = await getPromptById(promptId);
         setPrompt(data);
-        // ...
+      } catch (err) {
+        // --- INI BAGIAN PENTING UNTUK MEMANGGIL setError ---
+        if (err instanceof Error) {
+          if (err.message.includes("premium")) {
+            setError("premium_required");
+          } else {
+            setError(err.message);
+          }
+        } else {
+          setError("An unknown error occurred.");
+        }
+        // ----------------------------------------------------
       } finally {
         setIsLoading(false);
       }
     };
     fetchPromptDetail();
   }, [promptId]);
-
-  if (error === "premium_required") {
-    return (
-      <div className="text-center py-16">
-        <h2 className="text-2xl font-bold">Akses Konten Premium</h2>
-        <p className="text-gray-600 my-4">
-          Prompt ini hanya tersedia untuk pengguna premium.
-        </p>
-        <button
-          onClick={() => setCurrentPage("offerings")}
-          className="bg-yellow-400 text-black font-bold py-3 px-6 rounded-lg"
-        >
-          Lihat Paket Premium
-        </button>
-      </div>
-    );
-  }
 
   const handleCopy = () => {
     if (prompt?.promptText) {
@@ -133,8 +131,27 @@ const PromptDetailPage = ({
 
   if (isLoading)
     return <div className="text-center py-16">Memuat detail prompt...</div>;
+
+  if (error === "premium_required") {
+    return (
+      <div className="container mx-auto text-center py-16">
+        <h2 className="text-2xl font-bold">Akses Konten Premium</h2>
+        <p className="text-gray-600 my-4">
+          Prompt ini hanya tersedia untuk pengguna premium.
+        </p>
+        <button
+          onClick={() => setCurrentPage("offerings")}
+          className="bg-yellow-400 text-black font-bold py-3 px-6 rounded-lg"
+        >
+          Lihat Paket Premium
+        </button>
+      </div>
+    );
+  }
+
   if (error)
     return <div className="text-center py-16 text-red-500">Error: {error}</div>;
+
   if (!prompt)
     return <div className="text-center py-16">Prompt tidak ditemukan.</div>;
 
