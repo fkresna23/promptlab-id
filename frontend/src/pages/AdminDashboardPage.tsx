@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { getAllPrompts, type Prompt, type Category } from "../apiClient";
+import { getAllPrompts, type Prompt } from "../apiClient"; // Hanya impor 'Prompt' karena 'Category' sudah ada di dalamnya
 
 const AdminDashboardPage = () => {
-  const [prompts, setPrompts] = useState<Prompt[]>([]); // Gunakan tipe 'Prompt' dari apiClient
+  const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,8 +59,11 @@ const AdminDashboardPage = () => {
                   </p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                  {/* --- PERBAIKAN DI SINI --- */}
                   <p className="text-gray-900 whitespace-no-wrap">
-                    {prompt.category?.title || "N/A"}
+                    {prompt.category && typeof prompt.category === "object"
+                      ? prompt.category.title
+                      : "N/A"}
                   </p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
