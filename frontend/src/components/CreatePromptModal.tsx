@@ -63,7 +63,6 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
       .split("\n")
       .filter((line) => line.trim() !== "");
 
-    // --- PERBAIKAN 1: GUNAKAN TIPE PromptData ---
     const promptData: PromptData = {
       title,
       description,
@@ -76,7 +75,6 @@ const CreatePromptModal: React.FC<CreatePromptModalProps> = ({
     };
 
     try {
-      // --- PERBAIKAN 2: HAPUS `as any` ---
       await createPrompt(promptData);
       onSuccess();
       onClose();

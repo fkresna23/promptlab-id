@@ -91,14 +91,21 @@ export const createPrompt = async (req: Request, res: Response) => {
       promptText,
       category,
       isPremium,
-      whatItDoes, // <-- Tambahkan ini
-      tips, // <-- Tambahkan ini
-      howToUse, // <-- Tambahkan ini
+      whatItDoes,
+      tips,
+      howToUse,
     });
 
     const createdPrompt = await prompt.save();
     res.status(201).json(createdPrompt);
   } catch (error) {
-    // ...
+    console.error(error); // Log error untuk debugging
+    if (error instanceof Error) {
+      res
+        .status(400)
+        .json({ message: "Data prompt tidak valid", error: error.message });
+    } else {
+      res.status(500).json({ message: "Server Error" });
+    }
   }
 };

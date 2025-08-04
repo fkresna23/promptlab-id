@@ -66,16 +66,15 @@ export interface LoginCredentials {
   password: string;
 }
 
-// --- PERBAIKAN DI SINI ---
 export interface PromptData {
   title: string;
   description: string;
   promptText: string;
   category: string;
   isPremium: boolean;
-  whatItDoes?: string[]; // Jadikan opsional
-  tips?: string[]; // Jadikan opsional
-  howToUse?: string[]; // Jadikan opsional
+  whatItDoes?: string[];
+  tips?: string[];
+  howToUse?: string[];
 }
 
 // --- API FUNCTIONS ---
