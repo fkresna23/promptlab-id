@@ -66,7 +66,9 @@ export const getPromptsByCategory = async (
 };
 
 export const getPromptById = async (promptId: string): Promise<Prompt> => {
-  const response = await fetch(`${API_BASE_URL}/api/prompts/${promptId}`);
+  const response = await fetch(`${API_BASE_URL}/api/prompts/${promptId}`, {
+    headers: getAuthHeaders(), // Gunakan helper di sini
+  });
   return handleResponse(response);
 };
 
@@ -109,4 +111,19 @@ export const searchPrompts = async (
 
   const response = await fetch(`${API_BASE_URL}/api/prompts/search?${params}`);
   return handleResponse(response);
+};
+
+const getAuthHeaders = (): Record<string, string> => {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  const userInfoString = localStorage.getItem("userInfo");
+  if (userInfoString) {
+    const userInfo = JSON.parse(userInfoString);
+    if (userInfo.token) {
+      headers["Authorization"] = `Bearer ${userInfo.token}`;
+    }
+  }
+  return headers;
 };

@@ -3,9 +3,12 @@ import {
   getPromptsByCategory,
   getPromptById,
 } from "../controllers/promptController";
+import { protect } from "../middleware/authMiddleware"; // Impor middleware
+
 const router = express.Router();
 
 router.get("/category/:categoryId", getPromptsByCategory);
-router.get("/:id", getPromptById); // Rute baru
+// Gunakan middleware 'protect' di sini.
+router.get("/:id", protect, getPromptById);
 
 export default router;

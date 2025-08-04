@@ -8,6 +8,7 @@ export interface IUser extends Document {
   email: string;
   password?: string;
   googleId?: string;
+  role: "user" | "premium" | "admin";
   matchPassword(enteredPassword: string): Promise<boolean>;
 }
 
@@ -22,6 +23,7 @@ const userSchema = new mongoose.Schema<IUser>(
       },
     },
     googleId: { type: String, unique: true, sparse: true },
+    role: { type: String, enum: ["user", "premium", "admin"], default: "user" },
   },
   { timestamps: true }
 );

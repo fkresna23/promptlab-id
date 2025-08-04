@@ -85,18 +85,34 @@ const PromptDetailPage = ({
   useEffect(() => {
     const fetchPromptDetail = async () => {
       if (!promptId) return;
-      setIsLoading(true);
+      // setIsLoading(true); // BARIS INI BISA DIHAPUS, karena sudah true dari state awal
       try {
         const data = await getPromptById(promptId);
         setPrompt(data);
-      } catch (err) {
-        if (err instanceof Error) setError(err.message);
+        // ...
       } finally {
         setIsLoading(false);
       }
     };
     fetchPromptDetail();
   }, [promptId]);
+
+  if (error === "premium_required") {
+    return (
+      <div className="text-center py-16">
+        <h2 className="text-2xl font-bold">Akses Konten Premium</h2>
+        <p className="text-gray-600 my-4">
+          Prompt ini hanya tersedia untuk pengguna premium.
+        </p>
+        <button
+          onClick={() => setCurrentPage("offerings")}
+          className="bg-yellow-400 text-black font-bold py-3 px-6 rounded-lg"
+        >
+          Lihat Paket Premium
+        </button>
+      </div>
+    );
+  }
 
   const handleCopy = () => {
     if (prompt?.promptText) {
