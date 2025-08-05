@@ -1,3 +1,17 @@
+// --- TAMBAHKAN KODE DEBUGGING INI DI PALING ATAS ---
+console.log("--- API Function Initializing ---");
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("MONGO_URI is set:", !!process.env.MONGO_URI);
+console.log("JWT_SECRET is set:", !!process.env.JWT_SECRET);
+if (process.env.MONGO_URI) {
+  console.log(
+    "MONGO_URI preview:",
+    process.env.MONGO_URI.substring(0, 30) + "..."
+  );
+}
+console.log("--- End of Initial Debug Log ---");
+// --- BATAS AKHIR KODE DEBUGGING ---
+
 import express from "express";
 import cors, { CorsOptions } from "cors";
 import dotenv from "dotenv";
@@ -7,6 +21,7 @@ import categoryRoutes from "./routes/categoryRoutes";
 import userRoutes from "./routes/userRoutes";
 import promptRoutes from "./routes/promptRoutes";
 
+// ... sisa kode Anda tetap sama
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 connectDB();
@@ -38,7 +53,6 @@ const corsOptions: CorsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// PERBAIKAN UTAMA: Hapus awalan /api dari semua rute di sini
 app.use("/categories", categoryRoutes);
 app.use("/users", userRoutes);
 app.use("/prompts", promptRoutes);
@@ -47,12 +61,10 @@ app.get("/", (req, res) => {
   res.json({ message: "Selamat datang di API Prompt Library!" });
 });
 
-// Jalankan server hanya saat tidak di Vercel (untuk development lokal)
 if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`Server berjalan di http://localhost:${PORT}`);
   });
 }
 
-// Ekspor aplikasi untuk Vercel
 export default app;
