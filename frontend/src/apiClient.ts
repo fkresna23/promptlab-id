@@ -1,4 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
+const API_BASE_URL = import.meta.env.PROD
+  ? "/api"
+  : "http://localhost:5001/api";
 
 const handleResponse = async (response: Response) => {
   const data = await response.json();
@@ -79,7 +81,7 @@ export interface PromptData {
 
 // --- API FUNCTIONS ---
 export const getCategories = async (): Promise<Category[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/categories`);
+  const response = await fetch(`${API_BASE_URL}/categories`);
   return handleResponse(response);
 };
 
@@ -87,20 +89,20 @@ export const getPromptsByCategory = async (
   categoryId: string
 ): Promise<Prompt[]> => {
   const response = await fetch(
-    `${API_BASE_URL}/api/prompts/category/${categoryId}`
+    `${API_BASE_URL}/prompts/category/${categoryId}`
   );
   return handleResponse(response);
 };
 
 export const getPromptById = async (promptId: string): Promise<Prompt> => {
-  const response = await fetch(`${API_BASE_URL}/api/prompts/${promptId}`, {
+  const response = await fetch(`${API_BASE_URL}/prompts/${promptId}`, {
     headers: getAuthHeaders(),
   });
   return handleResponse(response);
 };
 
 export const registerUser = async (userData: UserData): Promise<UserInfo> => {
-  const response = await fetch(`${API_BASE_URL}/api/users/register`, {
+  const response = await fetch(`${API_BASE_URL}/users/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(userData),
@@ -111,7 +113,7 @@ export const registerUser = async (userData: UserData): Promise<UserInfo> => {
 export const loginUser = async (
   credentials: LoginCredentials
 ): Promise<UserInfo> => {
-  const response = await fetch(`${API_BASE_URL}/api/users/login`, {
+  const response = await fetch(`${API_BASE_URL}/users/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(credentials),
@@ -120,14 +122,14 @@ export const loginUser = async (
 };
 
 export const getAllPrompts = async (): Promise<Prompt[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/prompts/all`, {
+  const response = await fetch(`${API_BASE_URL}/prompts/all`, {
     headers: getAuthHeaders(),
   });
   return handleResponse(response);
 };
 
 export const createPrompt = async (promptData: PromptData): Promise<Prompt> => {
-  const response = await fetch(`${API_BASE_URL}/api/prompts`, {
+  const response = await fetch(`${API_BASE_URL}/prompts`, {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify(promptData),
