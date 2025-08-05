@@ -1,11 +1,9 @@
-// Konfigurasi ini sekarang akan berfungsi dengan benar untuk lokal dan produksi
-const API_BASE_URL = import.meta.env.PROD ? "/api" : "http://localhost:5001";
+const API_BASE_URL = import.meta.env.PROD
+  ? "/api"
+  : "http://localhost:5001/api";
 
 const handleResponse = async (response: Response) => {
-  // Jika respons tidak ada isinya (seperti pada 204 No Content), jangan coba parse JSON
-  if (response.status === 204) {
-    return null;
-  }
+  if (response.status === 204) return null;
   const data = await response.json();
   if (!response.ok) {
     throw new Error(data.message || "Terjadi kesalahan pada server");
@@ -27,7 +25,7 @@ const getAuthHeaders = (): Record<string, string> => {
   return headers;
 };
 
-// --- INTERFACES --- (tetap sama)
+// --- INTERFACES ---
 export interface Category {
   _id: string;
   title: string;
@@ -35,7 +33,6 @@ export interface Category {
   count: number;
   isNew?: boolean;
 }
-
 export interface Prompt {
   _id: string;
   title: string;
@@ -51,7 +48,6 @@ export interface Prompt {
   createdAt?: string;
   updatedAt?: string;
 }
-
 export interface UserInfo {
   _id: string;
   name: string;
@@ -59,18 +55,15 @@ export interface UserInfo {
   token: string;
   role: "user" | "premium" | "admin";
 }
-
 export interface UserData {
   name: string;
   email: string;
   password: string;
 }
-
 export interface LoginCredentials {
   email: string;
   password: string;
 }
-
 export interface PromptData {
   title: string;
   description: string;
@@ -82,60 +75,34 @@ export interface PromptData {
   howToUse?: string[];
 }
 
-// --- API FUNCTIONS --- (sekarang menggunakan base URL yang benar)
-export const getCategories = async (): Promise<Category[]> => {
-  const response = await fetch(`${API_BASE_URL}/categories`);
-  return handleResponse(response);
-};
-
-export const getPromptsByCategory = async (
-  categoryId: string
-): Promise<Prompt[]> => {
-  const response = await fetch(
-    `${API_BASE_URL}/prompts/category/${categoryId}`
-  );
-  return handleResponse(response);
-};
-
-export const getPromptById = async (promptId: string): Promise<Prompt> => {
-  const response = await fetch(`${API_BASE_URL}/prompts/${promptId}`, {
+// --- API FUNCTIONS ---
+export const getCategories = async (): Promise<Category[]> =>
+  fetch(`${API_BASE_URL}/categories`).then(handleResponse);
+export const getPromptsByCategory = (categoryId: string): Promise<Prompt[]> =>
+  fetch(`${API_BASE_URL}/prompts/category/${categoryId}`).then(handleResponse);
+export const getPromptById = (promptId: string): Promise<Prompt> =>
+  fetch(`${API_BASE_URL}/prompts/${promptId}`, {
     headers: getAuthHeaders(),
-  });
-  return handleResponse(response);
-};
-
-export const registerUser = async (userData: UserData): Promise<UserInfo> => {
-  const response = await fetch(`${API_BASE_URL}/users/register`, {
+  }).then(handleResponse);
+export const registerUser = (userData: UserData): Promise<UserInfo> =>
+  fetch(`${API_BASE_URL}/users/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(userData),
-  });
-  return handleResponse(response);
-};
-
-export const loginUser = async (
-  credentials: LoginCredentials
-): Promise<UserInfo> => {
-  const response = await fetch(`${API_BASE_URL}/users/login`, {
+  }).then(handleResponse);
+export const loginUser = (credentials: LoginCredentials): Promise<UserInfo> =>
+  fetch(`${API_BASE_URL}/users/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(credentials),
-  });
-  return handleResponse(response);
-};
-
-export const getAllPrompts = async (): Promise<Prompt[]> => {
-  const response = await fetch(`${API_BASE_URL}/prompts/all`, {
-    headers: getAuthHeaders(),
-  });
-  return handleResponse(response);
-};
-
-export const createPrompt = async (promptData: PromptData): Promise<Prompt> => {
-  const response = await fetch(`${API_BASE_URL}/prompts`, {
+  }).then(handleResponse);
+export const getAllPrompts = (): Promise<Prompt[]> =>
+  fetch(`${API_BASE_URL}/prompts/all`, { headers: getAuthHeaders() }).then(
+    handleResponse
+  );
+export const createPrompt = (promptData: PromptData): Promise<Prompt> =>
+  fetch(`${API_BASE_URL}/prompts`, {
     method: "POST",
     headers: getAuthHeaders(),
     body: JSON.stringify(promptData),
-  });
-  return handleResponse(response);
-};
+  }).then(handleResponse);
