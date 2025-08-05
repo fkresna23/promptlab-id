@@ -1,8 +1,11 @@
-const API_BASE_URL = import.meta.env.PROD
-  ? "/api"
-  : "http://localhost:5001/api";
+// Konfigurasi ini sekarang akan berfungsi dengan benar untuk lokal dan produksi
+const API_BASE_URL = import.meta.env.PROD ? "/api" : "http://localhost:5001";
 
 const handleResponse = async (response: Response) => {
+  // Jika respons tidak ada isinya (seperti pada 204 No Content), jangan coba parse JSON
+  if (response.status === 204) {
+    return null;
+  }
   const data = await response.json();
   if (!response.ok) {
     throw new Error(data.message || "Terjadi kesalahan pada server");
@@ -24,7 +27,7 @@ const getAuthHeaders = (): Record<string, string> => {
   return headers;
 };
 
-// --- INTERFACES ---
+// --- INTERFACES --- (tetap sama)
 export interface Category {
   _id: string;
   title: string;
@@ -79,7 +82,7 @@ export interface PromptData {
   howToUse?: string[];
 }
 
-// --- API FUNCTIONS ---
+// --- API FUNCTIONS --- (sekarang menggunakan base URL yang benar)
 export const getCategories = async (): Promise<Category[]> => {
   const response = await fetch(`${API_BASE_URL}/categories`);
   return handleResponse(response);

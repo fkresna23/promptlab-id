@@ -14,52 +14,45 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// PERBAIKAN: Konfigurasi CORS yang lebih type-safe
 const allowedOrigins: (string | RegExp)[] = [
-  "http://localhost:5173", // Untuk development lokal
-  process.env.CLIENT_URL || "", // URL Produksi utama Anda dari Heroku env
-  /\.vercel\.app$/, // Untuk semua subdomain Vercel
-].filter(Boolean); // Hapus string kosong jika CLIENT_URL undefined
+  "http://localhost:5173",
+  process.env.CLIENT_URL || "",
+  /\.vercel\.app$/,
+].filter(Boolean);
 
 const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
-    // Izinkan jika tidak ada origin (mobile apps, Postman, etc.) atau jika origin diizinkan
-    if (!origin) {
-      callback(null, true);
-      return;
-    }
-
-    // Cek apakah origin diizinkan
-    const isAllowed = allowedOrigins.some((allowed) => {
-      if (typeof allowed === "string") {
-        return allowed === origin;
-      } else if (allowed instanceof RegExp) {
-        return allowed.test(origin);
-      }
-      return false;
-    });
-
-    if (isAllowed) {
+    if (
+      !origin ||
+      allowedOrigins.some((allowed) => new RegExp(allowed).test(origin))
+    ) {
       callback(null, true);
     } else {
-      console.error(`Permintaan CORS DITOLAK dari origin: ${origin}`);
+      console.error(`CORS request DENIED from origin: ${origin}`);
       callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true, // Izinkan cookies jika diperlukan
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
 app.use(express.json());
 
-app.use("/api/categories", categoryRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/prompts", promptRoutes);
+// PERBAIKAN UTAMA: Hapus awalan /api dari semua rute di sini
+app.use("/categories", categoryRoutes);
+app.use("/users", userRoutes);
+app.use("/prompts", promptRoutes);
 
-app.get("/api", (req, res) => {
+app.get("/", (req, res) => {
   res.json({ message: "Selamat datang di API Prompt Library!" });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server berjalan di http://localhost:${PORT}`);
-});
+// Jalankan server hanya saat tidak di Vercel (untuk development lokal)
+if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server berjalan di http://localhost:${PORT}`);
+  });
+}
+
+// Ekspor aplikasi untuk Vercel
+export default app;
